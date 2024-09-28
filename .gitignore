@@ -4,5 +4,5 @@
 
 ###> editores ###
 .vscode
-.env
+#.env
 ###< editores ###
