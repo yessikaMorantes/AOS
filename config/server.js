@@ -2,7 +2,7 @@ import express from 'express';
 import { exports } from "./default.js";
 import router from "../routes/index.route.js";
 import pgService from '../services/pg.service.js';
-import errorMiddleware from '../middleware/middleware.js';
+import errorMiddleware from '../middleware/error.middleware.js';
 
 export default class Server {
 

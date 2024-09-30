@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { CustomError } from '../error/custom.error.js';
+import { CustomError } from '../objects/error.object.js';
 const router = Router();
 
 router.get("/", (req, res, next)=> {

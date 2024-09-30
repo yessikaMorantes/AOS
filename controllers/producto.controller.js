@@ -1,51 +1,50 @@
-import { getProductoModel, insertProductModel, updateProductByIdModel} from "../models/producto.model.js";
+import { CustomError } from "../objects/error.object.js";
+import { getProductoModel, insertProductModel, updateProductByIdModel } from "../models/producto.model.js";
+import { ObjectResponse } from "../objects/response.object.js";
 
-export const getAll = async (req, res) =>{
-    res.json({success: true, data: [] , msg : 'get All'})
+export const getAll = async (req, res) => {
+  ObjectResponse.set(true, [], 'Productos encontrados exitosamente').reply(res);
 }
 
-export async function getProducto(req, res) {
+export async function getProducto(req, res, next) {
   try {
     const { id } = req.params;
     const data = await getProductoModel(id);
 
-    if (data.length !== 0) {
-      res.json({ success: true, data: data, msg: 'Producto encontrado exitosamente' });
-    } else {
-      res.status(404).json({ success: false, msg: 'Producto no encontrado' });
+    if (!data || data.length === 0) {
+      CustomError.set('Producto no encontrado', 404).reply(next);
     }
+    ObjectResponse.set(true, data, 'Producto encontrado exitosamente').reply(res);
   } catch (error) {
-    console.error('Error en getProducto:', error);
-    res.status(500).json({ success: false, msg: 'Error al obtener el producto' });
+    console.error(error);
+    CustomError.set('Error al obtener el producto', 500).reply(next);
   }
 }
 
-export async function insertProduct(req, res) {
-    try {
-      const { name, category, price, stock, description } = req.body;
-  
-      const data = await insertProductModel(name, category, price, stock, description);
-  
-      res.json({ success: true, data: data, msg: 'Producto insertado exitosamente' });
-    } catch (error) {
-      console.error(error.message);
-      res.status(500).json({ success: false, msg: 'Error al insertar el producto' });
-    }
+export async function insertProduct(req, res, next) {
+  try {
+    const { name, category, price, stock, description } = req.body;
+    const data = await insertProductModel(name, category, price, stock, description);
+    
+    ObjectResponse.set(true, data, 'Producto insertado exitosamente').reply(res);
+  } catch (error) {
+    console.error(error);
+    CustomError.set('Error al insertar el producto', 500).reply(next);
   }
+}
 
- 
-export async function updateProductById(req, res) {
+
+export async function updateProductById(req, res, next) {
   try {
     const { id } = req.params;
     const { name, category, price, stock, description } = req.body;
     const currentProductResult = await getProductoModel(id);
 
     if (!currentProductResult || currentProductResult.length === 0) {
-      return res.status(404).json({ success: false, msg: 'Producto no encontrado' });
+      CustomError.set('Producto no encontrado', 404).reply(next);
     }
 
     const currentProduct = currentProductResult[0];
-
     const updatedProduct = {
       name: name !== undefined && name !== currentProduct.name ? name : currentProduct.name,
       category: category !== undefined && category !== currentProduct.category ? category : currentProduct.category,
@@ -53,11 +52,11 @@ export async function updateProductById(req, res) {
       stock: stock !== undefined && stock !== currentProduct.stock ? stock : currentProduct.stock,
       description: description !== undefined && description !== currentProduct.description ? description : currentProduct.description,
     };
-
     const data = await updateProductByIdModel(id, updatedProduct);
 
-    res.json({ success: true, data: data, msg: 'Producto actualizado exitosamente' });
+    ObjectResponse.set(true, data, 'Producto actualizado exitosamente').reply(res);
   } catch (error) {
-    res.status(500).json({ success: false, msg: 'Error al actualizar el producto' });
+    console.error(error);
+    CustomError('Error al actualizar el producto', 500).reply(next);
   }
 } 

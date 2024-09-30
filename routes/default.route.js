@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { CustomError } from "../error/custom.error.js";
+import { CustomError } from "../objects/error.object.js";
 
 const router = Router();
 
 router.use("/", (req, res, next) =>{
-    next(new CustomError("Not Found", 404));
+    CustomError.set("Not Found", 404).reply(next);
 })
 
 export default router;
