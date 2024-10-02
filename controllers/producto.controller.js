@@ -1,4 +1,9 @@
-import { getProductoModel, insertProductModel, updateProductByIdModel} from "../models/producto.model.js";
+import {
+  getProductoModel,
+  insertProductModel,
+  updateProductByIdModel,
+  deleteProductByIdModel,
+} from "../models/producto.model.js";
 
 export const getAll = async (req, res) =>{
     res.json({success: true, data: [] , msg : 'get All'})
@@ -36,12 +41,12 @@ export async function insertProduct(req, res) {
  
 export async function updateProductById(req, res) {
   try {
-    const { id } = req.params;
-    const { name, category, price, stock, description } = req.body;
+    const {id} = req.params;
+    const {name, category, price, stock, description} = req.body;
     const currentProductResult = await getProductoModel(id);
 
     if (!currentProductResult || currentProductResult.length === 0) {
-      return res.status(404).json({ success: false, msg: 'Producto no encontrado' });
+      return res.status(404).json({success: false, msg: 'Producto no encontrado'});
     }
 
     const currentProduct = currentProductResult[0];
@@ -56,8 +61,25 @@ export async function updateProductById(req, res) {
 
     const data = await updateProductByIdModel(id, updatedProduct);
 
-    res.json({ success: true, data: data, msg: 'Producto actualizado exitosamente' });
+    res.json({success: true, data: data, msg: 'Producto actualizado exitosamente'});
   } catch (error) {
-    res.status(500).json({ success: false, msg: 'Error al actualizar el producto' });
+    res.status(500).json({success: false, msg: 'Error al actualizar el producto'});
   }
-} 
+}
+
+export async function deleteProductById (req, res) {
+  try {
+    const { id } = req.params;
+    const data = await getProductoModel(id);
+
+    if (data.length !== 0) {
+     const data = await deleteProductByIdModel(id);
+      res.json({success: true, data: data, msg: 'Producto eliminado exitosamente'});
+    } else {
+      res.status(404).json({ success: false, msg: 'Producto no encontrado' });
+    }
+  } catch (error) {
+    console.error('Error en deleteProductById:', error);
+    res.status(500).json({ success: false, msg: 'Error al eliminar el producto' });
+  }
+}
