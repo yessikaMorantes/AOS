@@ -1,39 +1,22 @@
-# Clase 15-08-2023
-## Instalación
+# API ENDPONTS
 
-### Clonar el repositorio:
-```
-    git clone https://github.com/bluemaster23/clase.git
-    cd clase
-```
 
-### Instalación Manual
+## Obtener producto por el ID
 
-```
-    npm install
-```
+<code> GET localhost:4200/product/id </code>
 
-## Tabla de contenido
+## Obtener todos los productos
 
-### Característica
-- Node js
-- NPM
+<code> GET localhost:4200/product/ </code>
 
-Run Local:
-```
-    npm run dev
-```
-Run Producción:
-```
-    npm run start
-```
+## Insertar productos
 
-## API Endpoints
+<code> POST localhost:4200/product/insert </code>
 
-<code>GET, POST, PUT, DELETE /usuario</code> - Petición básica de enrutado
+## Actualizar producto por ID
 
-<code>GET /usuario</code> - Petición básica de enrutado
+<code>PUT localhost:4200/product/update/id </code>
 
-<code>POST /producto</code>- Petición solo POST
+## Borrar producto por ID
 
-<code>GET /producto/otro</code> - Petición solo GET
+<code>DELETE localhost:4200/product/delete/ </code>
