@@ -1,5 +1,15 @@
 import pgService from "../services/pg.service.js";
 
+
+export const getAllProductModel = async (id) => {
+  try {
+    const pg = new pgService();
+    const result = await pg.connection.query("SELECT * FROM public.product");
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
 export const getProductoModel = async (id) => {
   try {
     const pg = new pgService(); 

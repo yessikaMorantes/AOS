@@ -3,13 +3,19 @@ import {
   insertProductModel,
   updateProductByIdModel,
   deleteProductByIdModel,
+  getAllProductModel,
 } from "../models/producto.model.js";
 
-export const getAll = async (req, res) =>{
-    res.json({success: true, data: [] , msg : 'get All'})
+export const getAllProducts = async (req, res) =>{
+    try {
+      const result= await getAllProductModel();
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).json({ message: 'Error al obtener los productos', error });
+    }
 }
 
-export async function getProducto(req, res) {
+export async function getProduct(req, res) {
   try {
     const { id } = req.params;
     const data = await getProductoModel(id);
