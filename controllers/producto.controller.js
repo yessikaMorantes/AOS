@@ -1,13 +1,24 @@
 import { CustomError } from "../objects/error.object.js";
-import { getProductoModel, insertProductModel, updateProductByIdModel } from "../models/producto.model.js";
+import {
+  getProductoModel,
+  insertProductModel,
+  updateProductByIdModel,
+  deleteProductByIdModel,
+  getAllProductModel,
+} from "../models/producto.model.js";
 import { ObjectResponse } from "../objects/response.object.js";
 import { Validator } from '../validators/validator.js';
 
-export const getAll = async (req, res) => {
-  ObjectResponse.set(true, [], 'Productos encontrados exitosamente').reply(res);
+export const getAllProducts = async (req, res) => {
+  try {
+    const data = await getAllProductModel();
+    ObjectResponse.set(true, data, 'Productos encontrados exitosamente').reply(res);
+  } catch (error) {
+    CustomError.set([], 'Error al obtener los producto', 500).reply(res);
+  }
 }
 
-export const getProducto = [
+export const getProduct = [
   Validator.path('id'),
   Validator.validErrors,
   async (req, res) => {
@@ -16,13 +27,13 @@ export const getProducto = [
       const data = await getProductoModel(id);
 
       if (!data || data.length === 0) {
-        CustomError.set([],'Producto no encontrado', 404).reply(res);
+        CustomError.set([], 'Producto no encontrado', 404).reply(res);
         return;
       }
       ObjectResponse.set(true, data, 'Producto encontrado exitosamente').reply(res);
     } catch (error) {
       console.error(error);
-      CustomError.set([],'Error al obtener el producto', 500).reply(res);
+      CustomError.set([], 'Error al obtener el producto', 500).reply(res);
     }
   }
 ]
@@ -48,6 +59,7 @@ export const insertProduct = [
     }
   }
 ]
+
 
 export const updateProductById = [
   Validator.path('id'),
@@ -81,7 +93,27 @@ export const updateProductById = [
       ObjectResponse.set(true, data, 'Producto actualizado exitosamente').reply(res);
     } catch (error) {
       console.error(error);
-      CustomError('Error al actualizar el producto', 500).reply(res);
+      CustomError.set([], 'Error al actualizar el producto', 500).reply(res);
     }
   }
 ]
+
+
+export const deleteProductById = [
+  Validator.path('id'),
+  Validator.validErrors,
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const data = await getProductoModel(id);
+
+      if (!data || data.length === 0) {
+        CustomError.set([], 'Producto no encontrado', 404).reply(res);
+        return;
+      }
+      ObjectResponse.set(true, await deleteProductByIdModel(id), 'Producto eliminado exitosamente').reply(res);
+    } catch (error) {
+      console.error(error);
+      CustomError.set([], 'Error al eliminar el producto', 500).reply(res);
+    }
+  }]

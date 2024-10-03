@@ -8,6 +8,7 @@ const auth = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     if (!authHeader) {
         CustomError.set([],"Autenticacion fallida", 403).reply(res);
+        return;
     }
 
     const token = authHeader?.split(' ')[1];

@@ -1,9 +1,19 @@
 import pgService from "../services/pg.service.js";
 
+
+export const getAllProductModel = async (id) => {
+  try {
+    const pg = new pgService();
+    const result = await pg.connection.query("SELECT * FROM public.product");
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
 export const getProductoModel = async (id) => {
   try {
     const pg = new pgService(); 
-    const result = await pg.connection.query("SELECT * FROM product WHERE id = $1", id);
+    const result = await pg.connection.query("SELECT * FROM public.product WHERE id = $1", id);
     return result;
   } catch (error) {
     throw error;
@@ -14,7 +24,7 @@ export const insertProductModel = async (name, category, price, stock, descripti
   try {
     const pg = new pgService();
     return await pg.connection.query(
-      "INSERT INTO product (name, category, price, stock, description) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      "INSERT INTO public.product (name, category, price, stock, description) VALUES ($1, $2, $3, $4, $5) RETURNING *",
       [name, category, price, stock, description]
     );
   } catch (error) {
@@ -26,7 +36,7 @@ export const insertProductModel = async (name, category, price, stock, descripti
     try {
       const pg = new pgService();
       const result = await pg.connection.query(
-        `UPDATE product 
+        `UPDATE public.product 
          SET name = $1, category = $2, price = $3, stock = $4, description = $5 
          WHERE id = $6 RETURNING *`,
         [
@@ -45,3 +55,14 @@ export const insertProductModel = async (name, category, price, stock, descripti
       throw error;
     }
   };
+
+export const deleteProductByIdModel  = async (id, updatedProduct) => {
+  try {
+    const pg = new pgService();
+    const result = await pg.connection.query("DELETE FROM public.product WHERE id = $1", id);
+    console.log("aaaa" + result.rows);
+    return result.rows;
+  } catch (error) {
+    throw error;
+  }
+};
