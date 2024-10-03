@@ -1,10 +1,124 @@
-import { getProductoModel } from "../models/producto.model.js";
+import { CustomError } from "../objects/error.object.js";
+import {
+  getProductoModel,
+  insertProductModel,
+  updateProductByIdModel,
+  deleteProductByIdModel,
+  getAllProductModel,
+} from "../models/producto.model.js";
+import { ObjectResponse } from "../objects/response.object.js";
+import { Validator } from '../validators/validator.js';
 
-export const getAll = async (req, res) =>{
-    res.json({success: true, data: [] , msg : 'get All'})
+export const getAllProducts = async (req, res) => {
+  try {
+    const data = await getAllProductModel();
+    ObjectResponse.set(true, data, 'Productos encontrados exitosamente').reply(res);
+    return;
+  } catch (error) {
+    CustomError.set([], 'Error al obtener los producto', 500).reply(res);
+  }
 }
 
-export async function getProducto (req, res){
-   const data =await getProductoModel();
-    res.json({success: true, data: data , msg: 'getProducto'})
-}
+export const getProduct = [
+  Validator.path('id'),
+  Validator.validErrors,
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const data = await getProductoModel(id);
+
+      if (!data || data.length === 0) {
+        CustomError.set([], 'Producto no encontrado', 404).reply(res);
+        return;
+      }
+      ObjectResponse.set(true, data, 'Producto encontrado exitosamente').reply(res);
+      return;
+    } catch (error) {
+      console.error(error);
+      CustomError.set([], 'Error al obtener el producto', 500).reply(res);
+    }
+  }
+]
+
+
+
+export const insertProduct = [
+  Validator.body('name', true),
+  Validator.body('category', true),
+  Validator.body('price', true),
+  Validator.body('stock', true),
+  Validator.body('description', true),
+  Validator.validErrors,
+  async (req, res) => {
+    try {
+      const { name, category, price, stock, description } = req.body;
+      const data = await insertProductModel(name, category, price, stock, description);
+
+      ObjectResponse.set(true, data, 'Producto insertado exitosamente').reply(res);
+      return;
+    } catch (error) {
+      console.error(error);
+      CustomError.set([], 'Error al insertar el producto', 500).reply(res);
+    }
+  }
+]
+
+
+export const updateProductById = [
+  Validator.path('id'),
+  Validator.body('name', false),
+  Validator.body('category', false),
+  Validator.body('price', false),
+  Validator.body('stock', false),
+  Validator.body('description', false),
+  Validator.validErrors,
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, category, price, stock, description } = req.body;
+      const currentProductResult = await getProductoModel(id);
+
+      if (!currentProductResult || currentProductResult.length === 0) {
+        CustomError.set([], 'Producto no encontrado', 404).reply(res);
+        return;
+      }
+
+      const currentProduct = currentProductResult[0];
+      const updatedProduct = {
+        name: name !== undefined && name !== currentProduct.name ? name : currentProduct.name,
+        category: category !== undefined && category !== currentProduct.category ? category : currentProduct.category,
+        price: price !== undefined && price !== currentProduct.price ? price : currentProduct.price,
+        stock: stock !== undefined && stock !== currentProduct.stock ? stock : currentProduct.stock,
+        description: description !== undefined && description !== currentProduct.description ? description : currentProduct.description,
+      };
+      const data = await updateProductByIdModel(id, updatedProduct);
+
+      ObjectResponse.set(true, data, 'Producto actualizado exitosamente').reply(res);
+      return;
+    } catch (error) {
+      console.error(error);
+      CustomError.set([], 'Error al actualizar el producto', 500).reply(res);
+    }
+  }
+]
+
+
+export const deleteProductById = [
+  Validator.path('id'),
+  Validator.validErrors,
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const data = await getProductoModel(id);
+
+      if (!data || data.length === 0) {
+        CustomError.set([], 'Producto no encontrado', 404).reply(res);
+        return;
+      }
+      ObjectResponse.set(true, await deleteProductByIdModel(id), 'Producto eliminado exitosamente').reply(res);
+      return;
+    } catch (error) {
+      console.error(error);
+      CustomError.set([], 'Error al eliminar el producto', 500).reply(res);
+    }
+  }]
