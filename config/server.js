@@ -2,7 +2,6 @@ import express from 'express';
 import { exports } from "./default.js";
 import router from "../routes/index.route.js";
 import pgService from '../services/pg.service.js';
-import errorMiddleware from '../middleware/error.middleware.js';
 
 export default class Server {
 
@@ -16,11 +15,10 @@ export default class Server {
     }
 
     middleware() {
-        this.app.use(errorMiddleware);
+        this.app.use(express.json());
     }
 
     route() {
-        this.app.use(express.json());
         this.app.use(router);
     }
 
@@ -32,8 +30,8 @@ export default class Server {
 
     load() {
         this.connectionDB();
-        this.route();
         this.middleware();
+        this.route();
         this.runServer();
     }
 

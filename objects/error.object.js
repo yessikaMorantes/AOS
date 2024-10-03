@@ -1,16 +1,17 @@
+import { ObjectResponse } from "../objects/response.object.js";
 export class CustomError {
 
-    constructor(message, statusCode) {
+    constructor(data, message, statusCode) {
         this.message = message;
         this.statusCode = statusCode;
-        this.name = this.constructor.name;
+        this.data = data;
     }
 
-    static set(message, statusCode) {
-        return new CustomError(message, statusCode);
+    static set(data, message, statusCode) {
+        return new CustomError(data, message, statusCode);
     }
 
-    reply(next) {
-        next(this);
+    reply(res) {
+        res.status(this.statusCode).json(new ObjectResponse(false, this.data, this.message));
     }
 }
