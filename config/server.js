@@ -2,6 +2,7 @@ import express from 'express';
 import { exports } from "./default.js";
 import router from "../routes/index.route.js";
 import pgService from '../services/pg.service.js';
+import cors from 'cors';
 
 export default class Server {
 
@@ -15,6 +16,7 @@ export default class Server {
     }
 
     middleware() {
+        this.app.use(cors())
         this.app.use(express.json());
     }
 
