@@ -29,11 +29,13 @@ export class Validator {
                 return !mandatory ? category.optional() : category.notEmpty();
             case 'price':
                 const price = body('price')
-                    .isFloat().withMessage('El precio debe ser un decimal');
+                    .isFloat().withMessage('El precio debe ser un decimal')
+                    .isFloat({ min: 0 }).withMessage('El precio no puede ser negativo');
                 return !mandatory ? price.optional() : price.notEmpty();
             case 'stock':
                 const stock = body('stock')
-                    .isInt().withMessage('El stock debe ser numerico');
+                    .isInt().withMessage('El stock debe ser numerico')
+                    .isInt({ min: 0 }).withMessage('El stock no puede ser negativo');
                 return !mandatory ? stock.optional() : stock.notEmpty();
             case 'description':
                 const description = body('description')
@@ -45,7 +47,8 @@ export class Validator {
         switch (field) {
             case 'id':
                 return param('id')
-                    .isInt().withMessage('El id debe ser numerico');
+                    .isInt().withMessage('El id debe ser numerico')
+                    .isInt({ min: 0 }).withMessage('El id no puede ser negativo');
         }
     }
     static validErrors = (req, res, next) => {
