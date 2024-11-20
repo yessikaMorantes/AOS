@@ -16,6 +16,7 @@ const auth = (req, res, next) => {
     jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
         if (err) {
             CustomError.set([],"Autenticacion fallida", 403).reply(res);
+            return;
         }
         req.user = user;
         next();

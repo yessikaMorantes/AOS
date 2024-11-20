@@ -31,5 +31,6 @@ export const login = [
 export const validateToken = [
     async (req, res) => {
         ObjectResponse.set(true, req.body, 'Autenticacion exitosa').reply(res);
+        return;
     }
 ]
